@@ -33,3 +33,25 @@ diag(prop.table(ct, 1))
 sum(diag(prop.table(ct)))
 
 #--------------------------- Random forest
+
+#Paul add here 
+#--------------------------- PCA
+library(ggbiplot)
+
+dataRefined <-log(canData[,2:31])
+
+dataRefined <- do.call(data.frame, lapply(dataRefined, function(x) {
+  replace(x, is.infinite(x), 9999999)
+  })
+)
+
+pca <- prcomp(dataRefined, center=TRUE, scale. = TRUE)
+
+summary(pca, loadings=T)
+
+library(devtools)
+
+gPlot <- ggbiplot(pca, obs.scale = 1, groups = canData$diagnosis, var.scale = 1, ellipse = TRUE, circle = TRUE)
+
+gPlot
+
