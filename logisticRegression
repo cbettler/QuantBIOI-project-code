@@ -25,3 +25,13 @@ pr <- predict(modelCan, canData, type = "response")
 canData$diagnosis
 
 table(actual = canData$diagnosis, predicted = pr > .5 )
+
+#----------------------------
+library(MASS)
+
+fit <- lda(diagnosis ~ ., data=canData, na.action="na.omit", CV=TRUE)
+
+ct <- table(canData$diagnosis, fit$class)
+diag(prop.table(ct, 1))
+
+sum(diag(prop.table(ct)))
