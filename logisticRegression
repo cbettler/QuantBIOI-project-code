@@ -1,0 +1,27 @@
+canData <- read.csv(file="/Users/carleebettler/Downloads/breastCancerData.csv", header=TRUE, sep=",")
+
+ncol(canData)
+
+canData <- canData[2:ncol(canData)-1]
+
+
+boxplot(canData$radius_mean)
+        
+boxplot(canData$area_mean)
+
+
+canData$diagnosis <- ifelse(canData$diagnosis == "M",1, 0)
+
+canData$diagnosis
+
+is.na(canData)
+
+modelCan <- glm(diagnosis ~ .,family = binomial(logit), data=canData)
+
+summary(modelCan)
+
+pr <- predict(modelCan, canData, type = "response")
+
+canData$diagnosis
+
+table(actual = canData$diagnosis, predicted = pr > .5 )
