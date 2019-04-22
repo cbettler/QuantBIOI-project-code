@@ -1,0 +1,57 @@
+canData <- read.csv(file="/Users/carleebettler/Downloads/breastCancerData.csv", header=TRUE, sep=",")
+
+canData$x <- NULL
+
+canData$id <- NULL
+
+canData <- canData[,1:31]
+
+#boxplot(canData$radius_mean)
+        
+#boxplot(canData$area_mean)
+
+canData$diagnosis <- ifelse(canData$diagnosis == "M",1, 0)
+
+logit <- function(p) log(p/(1-p))
+
+modelCan <- glm(diagnosis ~ .,family = binomial(logit), data=canData)
+
+summary(modelCan)
+
+pr <- predict(modelCan, canData, type = "response")
+
+table(actual = canData$diagnosis, predicted = pr > .5 )
+
+#---------------------------- DFA:
+library(MASS)
+
+fit <- lda(diagnosis ~ ., data=canData, na.action="na.omit", CV=TRUE)
+
+ct <- table(canData$diagnosis, fit$class)
+diag(prop.table(ct, 1))
+
+sum(diag(prop.table(ct)))
+
+#--------------------------- Random forest
+
+#Paul add here 
+#--------------------------- PCA
+library(ggbiplot)
+
+dataRefined <-log(canData[,2:31])
+
+dataRefined <- do.call(data.frame, lapply(dataRefined, function(x) {
+  replace(x, is.infinite(x), 9999999)
+  })
+)
+
+pca <- prcomp(dataRefined, center=TRUE, scale. = TRUE)
+
+summary(pca, loadings=T)
+
+library(devtools)
+
+gPlot <- ggbiplot(pca, obs.scale = 1, groups = canData$diagnosis, var.scale = 1, ellipse = TRUE, circle = TRUE)
+
+gPlot
+
