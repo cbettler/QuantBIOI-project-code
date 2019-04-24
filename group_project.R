@@ -1,116 +1,3 @@
-data <- read.csv(file = "c:\\Users/okoro/Downloads/data.csv")
-data$x <- NULL
-data$id <- NULL
-data <- data[,1:31]
-
-#PCA
-pca <- princomp(data[,2:31], cor=T)
-summary(pca)
-pcs <- pca$scores[,1:10]
-
-pca_data <- cbind(as.character(data[,1]), pcs)
-pca_data <- as.data.frame(pca_data)
-pca_data$V1 <- as.character(pca_data$V1)
-pca_data$V1[pca_data$V1 == "B"] <- 0
-pca_data$V1[pca_data$V1 == "M"] <- 1
-pca_data$V1 <- as.numeric(pca_data$V1)
-
-
-# Code Benign (B) = 0
-# Code Malignant (M) = 1
-data$diagnosis <- as.character(data$diagnosis)
-data$diagnosis[data$diagnosis == "B"] <- 0
-data$diagnosis[data$diagnosis == "M"] <- 1
-
-
-
-data$diagnosis <- as.numeric(data$diagnosis)
-#data$diagnosis <- as.factor(data$diagnosis)
-
-#Prediction or Classification Algorithms
-
-#Logistic Regression
-logit  <- function(p) log(p/(1-p))
-model <- glm(diagnosis ~ ., family = binomial(logit), data = data)
-summary(model)
-pr <- predict(model, data, type="response")
-table(actual=data$diagnosis, predicted=pr>.5)
-#Calcuate performance (Accuracy, and Missclassification)
-results <- ifelse(pr > 0.5,1,0)
-answers <- data$diagnosis
-misClasificError <- mean(answers != results)
-acc=1-misClasificError
-acc
-
-#Random Forest
-#install.packages("randomForest")
-library(randomForest)
-
-model1 <- randomForest(diagnosis ~ ., data = data, importance = FALSE)
-summary(model1)
-pr <- predict(model1, data, type="class")
-table(actual=data$diagnosis, predicted=pr)
-
-
-
-#Support Vector Machine
-#install.packages("e1071")
-
-library(e1071)
-
-model2 <- svm(diagnosis ~ ., data = data)
-summary(model2)
-pr <- predict(model2, data)
-table(pr,data$diagnosis)
-
-
-# Decision Trees
-#install.packages("rpart")
-#install.packages("caret")
-
-library(rpart)
-library(caret)
-
-model3 <- train(diagnosis~., data = data, method="rpart")
-summary(model3)
-pr <- predict(model3, data=data)
-table(actual=data$diagnosis, predicted=pr)
-
-
-#KNN
-#Normalise all features
-#install.packages("class")
-library(class)
-normalize <- function(x) {return ((x - min(x)) / (max(x) - min(x))) }
-data_n <- as.data.frame(lapply(data[,2:31], normalize))
-#data_n <- cbind(data$diagnosis, data_n)
-data_n <- as.data.frame(data_n)
-test_data <- data_n[1:100,]
-test_lab <- data$diagnosis[1:100]
-
-train_data <- data_n[101:569,]
-train_lab <- data$diagnosis[101:569]
-
-rc_test_pred <- knn(train = train_data, test = test_data ,cl = train_lab, k=10)
-table(actual=test_lab, predicted = rc_test_pred)
-
-
-###
-#install.packages("MonteCarlo")
-library(MonteCarlo)
-
-
-####Eg
-runs <- 100000
-#runif samples from a uniform distribution
-xs <- runif(runs,min=-0.5,max=0.5)
-ys <- runif(runs,min=-0.5,max=0.5)
-in.circle <- xs^2 + ys^2 <= 0.5^2
-mc.pi <- (sum(in.circle)/runs)*4
-plot(xs,ys,pch='.',col=ifelse(in.circle,"blue","grey")
-     ,xlab='',ylab='',asp=1,
-     main=paste("MC Approximation of Pi =",mc.pi))
-
 
 ########################################################################################################
 # Actual code implementation for group project
@@ -121,7 +8,7 @@ plot(xs,ys,pch='.',col=ifelse(in.circle,"blue","grey")
 # Step One
 # read in the data and clean it
 
-data <- read.csv(file = "c:\\Users/okoro/Downloads/data.csv")
+data <- read.csv(data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/cancer_data.csv")
 
 #drop id and x column
 data$id <- NULL
@@ -132,7 +19,7 @@ data_feat <- colnames(data)
 str(data)
 summary(data$diagnosis)
 #export cleaned cancer data as cv for python
-write.csv(data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/cancer_data.csv")
+#write.csv(data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/cancer_data.csv")
 
 #Use PCA to reduce data dimension and retain over 95% variation
 pca <- princomp(data[,2:31], cor = TRUE)
@@ -148,7 +35,7 @@ pc_data <- cbind(as.character(data$diagnosis), pcs)
 pc_data <- as.data.frame(pc_data)
 names(pc_data)[names(pc_data) == "V1"] <- "diagnosis"
 #export pca_data to csv for python
-write.csv(pc_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/pc_data.csv")
+#write.csv(pc_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/pc_data.csv")
 
 library(ggbiplot)
 g <- ggbiplot(pca, obs.scale = 1, var.scale = 1, groups = data[,1], ellipse = TRUE, circle = TRUE)
@@ -205,7 +92,7 @@ print(p1)
 imp_feat <- c("diagnosis", "area_worst", "concave.points_mean", "concave.points_worst", "perimeter_worst", "radius_worst")
 rndf_filt_data <- subset(data, select = imp_feat)
 #export rndf data to csv for python
-write.csv(rndf_filt_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/rndf_filt_data.csv")
+#write.csv(rndf_filt_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/rndf_filt_data.csv")
 
 ###
 #Use Recursive Feature Elimination method to select import features in the dataset
@@ -224,7 +111,7 @@ rfe_filt_data <- subset(data, select = c("diagnosis", predictors(results_1)))
 #rfe_filt_data <- data[, which(colnames(data[,1:31]) %in% predictors(results_1))]
 #rfe_filt_data <- cbind(data$diagnosis, rfe_filt_data)
 #export data to csv for python
-write.csv(rfe_filt_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/rfe_filt_data.csv")
+#write.csv(rfe_filt_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/rfe_filt_data.csv")
 
 ##
 #Feature Importance Using Correlation Principle matrix plot
@@ -248,7 +135,7 @@ highlyCor
 cor_filt_data <- subset(data, select = c("diagnosis", highlyCor))
 #cor_filt_data <- data[, which(!colnames(data[,1:31]) %in% highlyCor)]
 #export data to csv for python
-write.csv(cor_filt_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/cor_filt_data.csv")
+#write.csv(cor_filt_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/cor_filt_data.csv")
 
 ####
 #NEXT steps
@@ -286,7 +173,7 @@ mc_data_M$diagnosis <- NULL
 mc_data_B$diagnosis <- NULL
 
 #Export all the created MC data to csv for python
-write.csv(mc_test_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/mc_test_data.csv")
-write.csv(mc_data_M, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/mc_data_M.csv")
-write.csv(mc_data_B, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/mc_data_B.csv")
+#write.csv(mc_test_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/mc_test_data.csv")
+#write.csv(mc_data_M, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/mc_data_M.csv")
+#write.csv(mc_data_B, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/mc_data_B.csv")
 

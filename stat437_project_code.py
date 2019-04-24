@@ -39,7 +39,7 @@ X_train = sc.fit_transform(X_train)
 X_test = sc.transform(X_test)
 
 #classification with different algorithms
-
+"""
 print("actual data")
 #Using Logistic Regression Algorithm to the Training Set
 from sklearn.linear_model import LogisticRegression
@@ -96,6 +96,7 @@ RF_Y_pred = RF.predict(X_test)
 RF_cm = confusion_matrix(Y_test, RF_Y_pred)
 print(RF_cm)
 print("Accuracy for Random Forest:", RF.score(X_test,Y_test))
+"""
 #################################################################################################
 
 #Step 2B
@@ -426,6 +427,7 @@ print("Accuracy for Random Forest:", RF.score(X_test,Y_test))
 #We choose to proceed all
 #Logistic Regression, KNN, SVM Kernel, and Random Forest
 
+
 #########################################################################################################################################
 #Use the monte carlo simulation to simulate feature values
 #import the rndf data created to be used for monte carlo simulation
@@ -456,34 +458,29 @@ mc_rw_B = mc_data_B["radius_worst"].montecarlo(sims=20)
 kruskal(mc_aw_B.data.iloc[:,0], mc_aw_M.data.iloc[:,-1])
 
 
-
-#mc_df = pd.DataFrame()
-
-
 #mc = data["radius_mean"].montecarlo(sims=20)
 #data.replace({"diagnosis": "M"}, 1, inplace=True)
 #data.replace({"diagnosis": "B"}, 0, inplace=True)
-"""
-y = data["diagnosis"]
 
-data.drop(["id", "diagnosis", "Unnamed: 32"], axis=1, inplace=True)
-feature_list = list(data.columns)
+#y = data["diagnosis"]
+
+#data.drop(["id", "diagnosis", "Unnamed: 32"], axis=1, inplace=True)
+#feature_list = list(data.columns)
 
 #Variable Importance
 
-rf_exp = RandomForestRegressor(n_estimators= 1000, random_state=100)
-rf_exp.fit(data, y)
-importances = list(rf_exp.feature_importances_)
+#rf_exp = RandomForestRegressor(n_estimators= 1000, random_state=100)
+#rf_exp.fit(data, y)
+#importances = list(rf_exp.feature_importances_)
 
-feature_importances = [(feature, round(importance, 2)) for feature, importance in zip(feature_list, importances)]
+#feature_importances = [(feature, round(importance, 2)) for feature, importance in zip(feature_list, importances)]
 
 
-x_values = list(range(len(importances)))
+#x_values = list(range(len(importances)))
 # Make a bar chart
-plt.bar(x_values, importances, orientation = 'vertical', color = 'r', edgecolor = 'k', linewidth = 1.2)
-plt.xticks(x_values, feature_list, rotation='vertical')
-plt.ylabel('Importance'); plt.xlabel('Variable');
-plt.title('Variable Importances');
+#plt.bar(x_values, importances, orientation = 'vertical', color = 'r', edgecolor = 'k', linewidth = 1.2)
+#plt.xticks(x_values, feature_list, rotation='vertical')
+#plt.ylabel('Importance'); plt.xlabel('Variable');
+#plt.title('Variable Importances');
 
-plt.show()
-"""
+#plt.show()
