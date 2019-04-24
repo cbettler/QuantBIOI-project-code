@@ -11,20 +11,25 @@ import numpy as np
 ## RandomForest Classifier with monte carlo simulated training set
 np.random.seed(1234)
 
-df = pd.read_csv("data.csv")
-df = df.drop(["id","Unnamed: 32"],axis=1)
+#df = pd.read_csv("mc_test_data.csv")
+df = pd.read_csv("rndf_filt_data.csv")
+#print(df.head())
+#df = df.drop(["id","Unnamed: 32"],axis=1)
+df = df.drop(["Unnamed: 0"],axis=1)
 df = df.replace({'diagnosis': "M"}, 1)
 df = df.replace({'diagnosis': "B"}, 0)
 
 #split dataset for mc seed and testing
 
-df_mc, df = numpy.split(df, [int(.7*len(df))])
+#df_mc, df = numpy.split(df, [int(.7*len(df))])
 
 #split dataset by class
-df_1 = df_mc.loc[df_mc.diagnosis==1]
-df_0 = df_mc.loc[df_mc.diagnosis==0]
-df_1 = df_1.drop(["diagnosis"],axis=1)
-df_0 = df_0.drop(["diagnosis"],axis=1)
+df_1 = pd.read_csv("mc_data_M.csv").drop(["Unnamed: 0"],axis=1)
+df_0 = pd.read_csv("mc_data_B.csv").drop(["Unnamed: 0"],axis=1)
+#df_1 = df_mc.loc[df_mc.diagnosis==1]
+#df_0 = df_mc.loc[df_mc.diagnosis==0]
+#df_1 = df_1.drop(["diagnosis"],axis=1)
+#df_0 = df_0.drop(["diagnosis"],axis=1)
 
 #simulate class 0 data
 mc_sim_df_0 = pd.DataFrame()
@@ -92,14 +97,24 @@ for i in range(len(pd)):
 print("knn", hit/len(pd))
 
 #svc
-model = svc()
+model = svc(kernel="linear")
 model = model.fit(dfTrn.values,DTrn)
 pd = model.predict(dfDev)
 hit = 0
 for i in range(len(pd)):
     if(int(pd[i])==int(DDev.iloc[i])):
         hit+=1
-print("svc", hit/len(pd))
+print("svc(linear)", hit/len(pd))
+
+#svc
+model = svc(kernel="rbf")
+model = model.fit(dfTrn.values,DTrn)
+pd = model.predict(dfDev)
+hit = 0
+for i in range(len(pd)):
+    if(int(pd[i])==int(DDev.iloc[i])):
+        hit+=1
+print("svc(rbf)", hit/len(pd))
 
 #logistic regression
 model = lgr()
