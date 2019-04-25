@@ -8,6 +8,7 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import confusion_matrix
+import random
 
 #Step 1
 #import all data from R
@@ -431,32 +432,131 @@ print("Accuracy for Random Forest:", RF.score(X_test,Y_test))
 #########################################################################################################################################
 #Use the monte carlo simulation to simulate feature values
 #import the rndf data created to be used for monte carlo simulation
-mc_data_M = pd.read_csv(r"C:\Users\okoro\OneDrive\Desktop\STAT 437\mc_data_M.csv")
-mc_data_B = pd.read_csv(r"C:\Users\okoro\OneDrive\Desktop\STAT 437\mc_data_B.csv")
+
+#set seed
+np.random.seed(1234)
+
+mc_data_M = pd.read_csv(r"C:\Users\okoro\OneDrive\Desktop\STAT 437\mc_data_M.csv").drop(["Unnamed: 0"],axis=1)
+mc_data_B = pd.read_csv(r"C:\Users\okoro\OneDrive\Desktop\STAT 437\mc_data_B.csv").drop(["Unnamed: 0"],axis=1)
+mc_test_data = pd.read_csv(r"C:\Users\okoro\OneDrive\Desktop\STAT 437\mc_test_data.csv").drop(["Unnamed: 0"],axis=1)
+
+mc_test_data = mc_test_data.replace({"diagnosis":"M"},1)
+mc_test_data = mc_test_data.replace({"diagnosis":"B"},0)
 
 #columns = ["area_worst", "concave.points_mean", "concave.points_worst", "perimeter_worst", "radius_worst"]
 
+#recode M = 1, and B = 0.
+
+#simulate class M = 1 data
+mc_sim_df_M = pd.DataFrame()
+mc_sim_df_M['diagnosis']= ['1'] * len(mc_data_M.index)
+for col in mc_data_M.columns:
+    col_sim = mc_data_M[col].montecarlo(sims = 2, bust = 0, goal = 0).data
+    mc_sim_df_M[col] = col_sim.iloc[:,-1]
+
+#Simulate class B = 0
+mc_sim_df_B = pd.DataFrame()
+mc_sim_df_B['diagnosis']= ['0'] * len(mc_data_B.index)
+for col in mc_data_B.columns:
+    col_sim = mc_data_B[col].montecarlo(sims = 2, bust = 0, goal = 0).data
+    mc_sim_df_B[col] = col_sim.iloc[:,-1]
+
+mc_sim_data = mc_sim_df_B.append(mc_sim_df_M)
+
+#Using Monte Carlo simulation data
+print("Monte Carlo Simulated data")
+
+X = mc_sim_data.iloc[:,1:].values
+Y = mc_sim_data.iloc[:,0].values
+
+#Recode the M and B as M =1, B = 0
+#labelencoder_Y = LabelEncoder()
+#Y = labelencoder_Y.fit_transform(Y)
+
+#Split data into train 80% and test 20%
+X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.2, random_state = 1234)
+
+len(X_train)
+len(X_test)
+
+#Feature Scaling
+#Scale all features to be with 0 and 1
+sc = StandardScaler()
+X_train = sc.fit_transform(X_train)
+X_test = sc.transform(X_test)
+
+#classification with different algorithms
+
+#Using Logistic Regression Algorithm to the Training Set
+LR = LogisticRegression(random_state = 1234, solver = "liblinear")
+LR.fit(X_train, Y_train)
+LR_Y_pred = LR.predict(X_test)
+LR_cm = confusion_matrix(Y_test, LR_Y_pred)
+print("Confusion Matrix")
+print(LR_cm)
+print("classification Accuracy for Logistic Regression:", LR.score(X_test,Y_test))
+
+
+#Using KNeighborsClassifier Method of neighbors class to use Nearest Neighbor algorithm
+knn = KNeighborsClassifier(n_neighbors = 5, metric = 'minkowski', p = 2)
+knn.fit(X_train, Y_train)
+knn_Y_pred = knn.predict(X_test)
+knn_cm = confusion_matrix(Y_test, knn_Y_pred)
+print(knn_cm)
+print("Classification Accuracy for KNN:", knn.score(X_test,Y_test))
+
+#Using SVC method of svm class to use Support Vector Machine Algorithm
+sv = SVC(kernel = 'linear', random_state = 1234)
+sv.fit(X_train, Y_train)
+sv_Y_pred = sv.predict(X_test)
+sv_cm = confusion_matrix(Y_test, sv_Y_pred)
+print(sv_cm)
+print("Accuracy for SV:", sv.score(X_test,Y_test))
+
+#Using SVC method of svm class to use Kernel method of SVM Algorithm
+svk = SVC(kernel = 'rbf', random_state = 1234)
+svk.fit(X_train, Y_train)
+svk_Y_pred = svk.predict(X_test)
+svk_cm = confusion_matrix(Y_test, svk_Y_pred)
+print(svk_cm)
+print("Accuracy for SV Kerne:", svk.score(X_test,Y_test))
+
+
+#Using RandomForestClassifier method of ensemble class to use Random Forest Classification algorithm
+RF = RandomForestClassifier(n_estimators = 10, criterion = 'entropy', random_state = 0)
+RF.fit(X_train, Y_train)
+RF_Y_pred = RF.predict(X_test)
+RF_cm = confusion_matrix(Y_test, RF_Y_pred)
+print(RF_cm)
+print("Accuracy for Random Forest:", RF.score(X_test,Y_test))
+
+#Because of how well these models performed at classifying the data
+#We choose to proceed all
+#Logistic Regression, KNN, SVM Kernel, and Random Forest
+
+
+"""        
 #Run monte carlo simulations
 #for Malignant (M)
-mc_aw_M = mc_data_M["area_worst"].montecarlo(sims=20)
-mc_cm_M = mc_data_M["concave.points_mean"].montecarlo(sims=20)
-mc_cw_M = mc_data_M["concave.points_worst"].montecarlo(sims=20)
-mc_pw_M = mc_data_M["perimeter_worst"].montecarlo(sims=20)
-mc_rw_M = mc_data_M["radius_worst"].montecarlo(sims=20)
+mc_aw_M = mc_data_M["area_worst"].montecarlo(sims=2)
+mc_cm_M = mc_data_M["concave.points_mean"].montecarlo(sims=2)
+mc_cw_M = mc_data_M["concave.points_worst"].montecarlo(sims=2)
+mc_pw_M = mc_data_M["perimeter_worst"].montecarlo(sims=2)
+mc_rw_M = mc_data_M["radius_worst"].montecarlo(sims=2)
 
 #Use kruskal to check that data has the same distribution with original
 kruskal(mc_aw_M.data.iloc[:,0], mc_aw_M.data.iloc[:,-1])
 
 #for Benign (B)
-mc_aw_B = mc_data_B["area_worst"].montecarlo(sims=20)
-mc_cm_B = mc_data_B["concave.points_mean"].montecarlo(sims=20)
-mc_cw_B = mc_data_B["concave.points_worst"].montecarlo(sims=20)
-mc_pw_B = mc_data_B["perimeter_worst"].montecarlo(sims=20)
-mc_rw_B = mc_data_B["radius_worst"].montecarlo(sims=20)
+mc_aw_B = mc_data_B["area_worst"].montecarlo(sims=2)
+mc_cm_B = mc_data_B["concave.points_mean"].montecarlo(sims=2)
+mc_cw_B = mc_data_B["concave.points_worst"].montecarlo(sims=2)
+mc_pw_B = mc_data_B["perimeter_worst"].montecarlo(sims=2)
+mc_rw_B = mc_data_B["radius_worst"].montecarlo(sims=2)
 
 #Use kruskal to check that data has the same distribution with original
 kruskal(mc_aw_B.data.iloc[:,0], mc_aw_M.data.iloc[:,-1])
-
+"""
 
 #mc = data["radius_mean"].montecarlo(sims=20)
 #data.replace({"diagnosis": "M"}, 1, inplace=True)
