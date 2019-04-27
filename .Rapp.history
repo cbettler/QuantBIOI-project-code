@@ -159,39 +159,6 @@ ct <- table(canData$diagnosis, fit$class)#
 diag(prop.table(ct, 1))#
 #
 sum(diag(prop.table(ct)))
-canData <- read.csv(file="/Users/Ian/Documents/GitHub/data.csv", header=TRUE, sep=",")#
-#
-data = subset(data, select=-c("id"))#
-ncol(canData)#
-#
-canData <- canData[2:ncol(canData)-1]#
-boxplot(canData$radius_mean)#
-boxplot(canData$area_mean)#
-canData$diagnosis <- ifelse(canData$diagnosis == "M",1, 0)#
-#
-canData$diagnosis#
-#
-is.na(canData)#
-#
-modelCan <- glm(diagnosis ~ .,family = binomial(logit), data=canData)#
-#
-summary(modelCan)#
-#
-pr <- predict(modelCan, canData, type = "response")#
-#
-canData$diagnosis#
-#
-table(actual = canData$diagnosis, predicted = pr > .5 )#
-#
-#----------------------------#
-library(MASS)#
-#
-fit <- lda(diagnosis ~ ., data=canData, na.action="na.omit", CV=TRUE)#
-#
-ct <- table(canData$diagnosis, fit$class)#
-diag(prop.table(ct, 1))#
-#
-sum(diag(prop.table(ct)))
 canData <- read.csv(file="~/Ian/Documents/GitHub/data.csv", header=TRUE, sep=",")#
 #
 data = subset(data, select=-c("id"))#
@@ -291,3 +258,171 @@ ct <- table(canData$diagnosis, fit$class)#
 diag(prop.table(ct, 1))#
 #
 sum(diag(prop.table(ct)))
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")#
+accuracy <- c(0.8907563025210085, 0.8907563025210085, 0.773109243697479, 0.9243697478991597, 0.865546218487395)#
+#
+colors = c("green","orange","brown", "red", "blue")#
+#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores")#
+#
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")#
+accuracy <- c(0.9159663865546218, 0.8571428571428571, 0.7647058823529411, 0.9159663865546218, 0.9243697478991597)#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Monte Carlo)")
+Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")#
+accuracy <- c(0.8907563025210085, 0.8907563025210085, 0.773109243697479, 0.9243697478991597, 0.865546218487395)#
+#
+colors = c("green","orange","brown", "red", "blue")#
+#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores")
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")#
+accuracy <- c(0.8907563025210085, 0.8907563025210085, 0.773109243697479, 0.9243697478991597, 0.865546218487395)#
+#
+colors = c("green","orange","brown", "red", "blue")#
+#
+bp = barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores")#
+#
+text(bp,accuracy[1,]-4,labels=accuracy[1,],cex=.8)#
+#
+bp
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")#
+accuracy <- c(0.8907563025210085, 0.8907563025210085, 0.773109243697479, 0.9243697478991597, 0.865546218487395)#
+#
+colors = c("green","orange","brown", "red", "blue")#
+#
+bp = barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores")#
+#
+text(bp,accuracy,labels=accuracy)#
+#
+bp
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")#
+accuracy <- c(0.8907563025210085, 0.8907563025210085, 0.773109243697479, 0.9243697478991597, 0.865546218487395)#
+#
+colors = c("green","orange","brown", "red", "blue")#
+#
+bp = barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores")#
+#
+text(bp,accuracy,labels=accuracy,cex=1)#
+#
+bp
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")#
+accuracy <- c(0.8907563025210085, 0.8907563025210085, 0.773109243697479, 0.9243697478991597, 0.865546218487395)#
+#
+colors = c("green","orange","brown", "red", "blue")#
+#
+bp = barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores")#
+#
+text(bp,accuracy,labels=accuracy,cex=.8)#
+#
+bp
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")#
+accuracy <- c(0.8907563025210085, 0.8907563025210085, 0.773109243697479, 0.9243697478991597, 0.865546218487395)#
+#
+colors = c("green","orange","brown", "red", "blue")#
+#
+bp = barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores")#
+#
+text(bp,accuracy,labels=accuracy)#
+#
+bp
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "Logistic R(mc)", "SVM", "SVM(mc)", "SVM Kernel", "SVM Kernel(mc)", "Random F", "Random F(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.8907563025210085, 0.9159663865546218, 0.8907563025210085, 0.8571428571428571, 0.773109243697479, 0.7647058823529411, 0.9243697478991597, 0.9159663865546218, 0.865546218487395, 0.9243697478991597)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set#
+)")
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "Logistic R(mc)", "SVM", "SVM(mc)", "SVM Kernel", "SVM Kernel(mc)", "Random F", "Random F(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.8907563025210085, 0.9159663865546218, 0.8907563025210085, 0.8571428571428571, 0.773109243697479, 0.7647058823529411, 0.9243697478991597, 0.9159663865546218, 0.865546218487395, 0.9243697478991597)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "Logistic R(mc)", "SVM", "SVM(mc)", "SVM Kernel", "SVM Kernel(mc)", "Random F", "Random F(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.8907563025210085, 0.9159663865546218, 0.8907563025210085, 0.8571428571428571, 0.773109243697479, 0.7647058823529411, 0.9243697478991597, 0.9159663865546218, 0.865546218487395, 0.9243697478991597)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+#Bar Plotting#
+#
+Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")#
+accuracy <- c(0.8907563025210085, 0.9159663865546218, 0.8907563025210085, 0.8571428571428571, 0.773109243697479, 0.7647058823529411, 0.9243697478991597, 0.9159663865546218, 0.865546218487395, 0.9243697478991597)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+Al_names <- c("Logistic R", "Logistic R(mc)", "SVM", "SVM(mc)", "SVM Kernel", "SVM Kernel(mc)", "Random F", "Random F(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_Kern", "SVM_Kern(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_K", "SVM_K(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_Kern", "SVM_Kern(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_Kern", "SVM_Kern(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+xlab='Mean Model Score (100 runs)'
+ylab='Accuracy'
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_Kern", "SVM_Kern(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_Kern", "SVM_Kern(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_Kern", "SVM_Kern(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_Kern", "SVM_Kern(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)")#
+xlab='Mean Model Score (100 runs)'#
+ylab='Accuracy'
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_Kern", "SVM_Kern(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)",xlab='Mean Model Score (100 runs)',ylab='Accuracy')
+Al_names <- c("LogR", "LogR(mc)", "SVM", "SVM(mc)", "SVM_K", "SVM_K(mc)", "RF", "RF(mc)", "KNN", "KNN(mc)")#
+accuracy <- c(0.890756302521, 0.928823529412, 0.890756302521, 0.874705882353, 0.773109243697, 0.763025210084, 0.93731092437, 0.916134453782, 0.865546218487, 0.908907563025)#
+#
+colors = c("blue","orange","blue","orange","blue","orange","blue","orange","blue","orange")#
+barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores (Unsimulated Dev Set and Monte Carlo Simulated Dev Set)",xlab='Mean Model Score (100 runs)',ylab='Accuracy')
