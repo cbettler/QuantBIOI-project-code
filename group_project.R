@@ -18,8 +18,10 @@ data_feat <- colnames(data)
 #check data structure
 str(data)
 summary(data$diagnosis)
-#export cleaned cancer data as cv for python
+#export cleaned cancer data as csv to python, so as to run the classification algorithm in python
 #write.csv(data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/cancer_data.csv")
+
+#Step 2, Reduced dimension of data using different dimensionality reduction technique
 
 #Use PCA to reduce data dimension and retain over 95% variation
 pca <- princomp(data[,2:31], cor = TRUE)
@@ -34,20 +36,18 @@ pcs <- pca$scores[,1:10]
 pc_data <- cbind(as.character(data$diagnosis), pcs)
 pc_data <- as.data.frame(pc_data)
 names(pc_data)[names(pc_data) == "V1"] <- "diagnosis"
-#export pca_data to csv for python
+#export pca_data as csv to python, so as to run the classification algorithm in python
 #write.csv(pc_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/pc_data.csv")
 
 library(ggbiplot)
 g <- ggbiplot(pca, obs.scale = 1, var.scale = 1, groups = data[,1], ellipse = TRUE, circle = TRUE)
 print(g)
 
-#Step 2: Determine most important features of the breast cancer dataset
+# Determine most important features of the breast cancer dataset and use them to reduce the cancer data dimension
 
 
 #Feature Importance Using Random Forest
 library(caret)
-#library(doParallel) # parallel processing
-#registerDoParallel()
 
 # prepare training scheme
 control <- trainControl(method = "repeatedcv", number = 10, repeats = 10)
@@ -91,11 +91,11 @@ print(p1)
 #Select features with over 50 unit of importance. There are 5 features
 imp_feat <- c("diagnosis", "area_worst", "concave.points_mean", "concave.points_worst", "perimeter_worst", "radius_worst")
 rndf_filt_data <- subset(data, select = imp_feat)
-#export rndf data to csv for python
+#export rndf data as csv to python so as to run the classification algorithm in python
 #write.csv(rndf_filt_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/rndf_filt_data.csv")
 
 ###
-#Use Recursive Feature Elimination method to select import features in the dataset
+#Use Recursive Feature Elimination method to select important features in the dataset
 set.seed(1234)
 # define the control using a random forest selection function with cross validation
 rfcontrol <- rfeControl(functions = rfFuncs, method = "cv", number = 10)
@@ -106,15 +106,13 @@ results_1 <- rfe(x = data[,2:31], y = as.factor(data$diagnosis), sizes = c(1:30)
 # chosen features
 predictors(results_1)
 
-#create a data filtered by rfe
+#reduce the dimension of the cancer dataset by the features selected by RFE
 rfe_filt_data <- subset(data, select = c("diagnosis", predictors(results_1)))
-#rfe_filt_data <- data[, which(colnames(data[,1:31]) %in% predictors(results_1))]
-#rfe_filt_data <- cbind(data$diagnosis, rfe_filt_data)
-#export data to csv for python
+#export data as csv to python, so as to run the classification algorithm in python
 #write.csv(rfe_filt_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/rfe_filt_data.csv")
 
 ##
-#Feature Importance Using Correlation Principle matrix plot
+#Feature Importance Using Correlation matrix plot
 #The idea is to remove features that are highly correlated, and thereby reduce data dimension and regard the remaining features
 # as important features
 
@@ -133,25 +131,24 @@ highlyCor
 
 #Then create a data filtered by corr
 cor_filt_data <- subset(data, select = c("diagnosis", highlyCor))
-#cor_filt_data <- data[, which(!colnames(data[,1:31]) %in% highlyCor)]
-#export data to csv for python
+#export data as csv to python, so as to run the classification algorithm in python
 #write.csv(cor_filt_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/cor_filt_data.csv")
 
 ####
 #NEXT steps
 #1 import data to python and split into train and test sets
 #2 run classification algorithms on the train and test
-#3 classification algorithms to use are: Logistic Regression, K nearest neighbour, support vector machines, Kernel SVM, Decision
-#Tree Algorithm, Random Forest Classification
-#4 use monte carlo (mc) simulation to generate data for each important feature, and run Kruskal wallis on each mc feature 
+#3 classification algorithms to use are: Logistic Regression, K nearest neighbour, support vector machines, Random Forest Classification
+#4 use monte carlo (mc) simulation to generate data for the 5 most important feature from RF, and run Kruskal wallis on each mc feature 
 # against original feature. Then select mc that have the largest p-value. Reason is beacuse we want mc and original features to 
 #have no difference in mean.
 #5 fit classification algorithm with mc data and test with mc data
-#6 use mc data as train and imported data as test. And Vice Versa
+#6 use mc data as train and original data as test. And Vice Versa
 # calculate accuracy at each classification step
 
 
-#create dataset for Monte Carlo using the rndf filtered data
+#### Monte Carlo was done in python
+#create dataset for Monte Carlo using the random forest (rndf) filtered data
 #Split the dataset into two. train and test. Use the train (mc_data) to generate Monte data. train with MC data and test on test
 library(caret)
 
@@ -172,7 +169,7 @@ mc_data_B_Y <- mc_data_B$diagnosis
 mc_data_M$diagnosis <- NULL
 mc_data_B$diagnosis <- NULL
 
-#Export all the created MC data to csv for python
+#Export all the created MC data as csv to python, so as to run the monte carlo algorithm in python
 #write.csv(mc_test_data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/mc_test_data.csv")
 #write.csv(mc_data_M, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/mc_data_M.csv")
 #write.csv(mc_data_B, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/mc_data_B.csv")
@@ -180,27 +177,28 @@ mc_data_B$diagnosis <- NULL
 
 
 
-#Bar Plotting
+#Bar Plotting for accuracy Performances of the classificaction algorithms on the original dataset and Dimensionally reduced dataset
+#The accuracy values were generated in python and copied into R for ease
 
 Al_names <- c("Logistic R", "SVM", "SVM Kernel", "Random F", "KNN")
-accuracy <- c(0.956140350877193, 0.956140350877193, 0.956140350877193, 0.9122807017543859, 0.9298245614035088)
-
 colors = c("green","orange","brown", "red", "blue")
 
+#Original Dataset with all features retained
+accuracy <- c(0.956140350877193, 0.956140350877193, 0.956140350877193, 0.9122807017543859, 0.9298245614035088)
 barplot(accuracy, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores")
 
 #PCA filtered Data
 accuracyPca <- c(0.956140350877193, 0.956140350877193, 0.9473684210526315, 0.8947368421052632, 0.9035087719298246)
+barplot(accuracypca, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores on PCA filtered Data")
 
 #RF filtered Data 
 accuracyRF <- c(0.9473684210526315, 0.9385964912280702, 0.9298245614035088, 0.9122807017543859, 0.9210526315789473)
+barplot(accuracyRF, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores on RF filtered Data")
 
 #RFE filtered data
 accuracyRFE <- c(0.956140350877193, 0.956140350877193, 0.9473684210526315, 0.8947368421052632, 0.9035087719298246)
+barplot(accuracyRFE, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores on RFE filtered Data")
 
 #cor filtered Data
 accuracycor <- c(0.956140350877193, 0.956140350877193, 0.9298245614035088, 0.8947368421052632, 0.9385964912280702)
-
-data_acc <- c(accuracyPca, accuracyRF, accuracyRFE, accuracycor)
-
 barplot(accuracycor, names.arg = Al_names, col = colors, beside = TRUE, main = "Classification Algorithms Accuracy Scores on COR filtered Data")
