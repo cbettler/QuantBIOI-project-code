@@ -8,7 +8,7 @@
 # Step One
 # read in the data and clean it
 
-data <- read.csv(data, file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/cancer_data.csv")
+data <- read.csv(file = "C:/Users/okoro/OneDrive/Desktop/STAT 437/cancer_data.csv")
 
 #drop id and x column
 data$id <- NULL
